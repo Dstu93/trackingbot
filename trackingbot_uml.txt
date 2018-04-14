@@ -11,8 +11,7 @@ package bot{
     
     class BotBuilder{
         + new() : BotBuilder
-        + build(&self,config : AppConfig, type : BotType) : 
-Result<Box<MessageBot>,Error>
+        + build(&self,config : AppConfig, type : BotType) : Result<Box<MessageBot>,Error>
     }
     
     enum BotType{
@@ -22,8 +21,7 @@ Result<Box<MessageBot>,Error>
     package commands{
         interface MessageCommand{
             + exec_cmd(&self,args: Vec<&str>) : Result<String,Error>
-            + exec_cmd_mut(&mut self, args: Vec<&str>) : 
-Result<String,Error>
+            + exec_cmd_mut(&mut self, args: Vec<&str>) : Result<String,Error>
         }
         class TrackingStateCommand
         class IngredientsCommand
