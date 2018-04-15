@@ -20,8 +20,8 @@ package bot{
     
     package commands{
         interface MessageCommand{
-            + exec_cmd(&self,args: Vec<&str>) : Result<String,Error>
-            + exec_cmd_mut(&mut self, args: Vec<&str>) : Result<String,Error>
+            + exec_cmd(&self,args: Vec<&str>, chat: &Chat) : Result<String,Error>
+            + exec_cmd_mut(&mut self, args: Vec<&str>,chat: &Chat) : Result<String,Error>
             + type(&self) -> CommandType
         }
         class TrackingStateCommand
