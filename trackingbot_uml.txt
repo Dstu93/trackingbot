@@ -4,7 +4,7 @@ title Trackingbot Architecure
 
 package bot{
     interface MessageBot{
-        + apply(&mut self,cmds : Vec<MessageCommand>)
+        + apply(&mut self,cmds : Vec<Box<MessageCommand>>)
         + start(&mut self) : Result<(),Error>
     }
     class TelegramBot
@@ -15,24 +15,39 @@ package bot{
     }
     
     enum BotType{
-        + TELEGRAM
+        + Telegram
     }
     
     package commands{
         interface MessageCommand{
             + exec_cmd(&self,args: Vec<&str>) : Result<String,Error>
             + exec_cmd_mut(&mut self, args: Vec<&str>) : Result<String,Error>
+            + type(&self) -> CommandType
         }
         class TrackingStateCommand
-        class IngredientsCommand
+        class OrderDetailsCommand
+        enum CommandType{
+            + SingleCommand
+            + ChatCommand
+        }
+
+        package services{
+            interface TrackingStateService
+            interface OrderDetailsService
+            class OrderDetails
+            class TrackingState
+        }
+
+        class Chat
+        class Message
     }
 }
 
-package config{
-    class AppConfig
-    class DatabaseConfig
-    class ConfigLoader{
-        + load() : Result<AppConfig,Error>
+    package config{
+        class AppConfig
+        class DatabaseConfig
+        class ConfigLoader{
+            + load() : Result<AppConfig,Error>
     }
 }
 
@@ -40,9 +55,20 @@ BotBuilder --> BotType
 BotBuilder --> AppConfig
 BotBuilder --> MessageBot
 
+Chat ---* Message
+
 TelegramBot --|> MessageBot
+
+MessageCommand --> Chat
+MessageCommand --> CommandType
+
+TrackingStateService --> TrackingState
+OrderDetailsService --> OrderDetails
+
 TrackingStateCommand --|> MessageCommand
-IngredientsCommand --|> MessageCommand
+OrderDetailsCommand --|> MessageCommand
+OrderDetailsCommand --> OrderDetailsService
+TrackingStateCommand --> TrackingStateService
 MessageBot --> MessageCommand
 
 AppConfig --> DatabaseConfig
