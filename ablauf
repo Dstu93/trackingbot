@@ -33,6 +33,7 @@ Tabelle "OrderPos": -> Falls mehrere Produkte je Bestellung möglich?
 
 Bzgl. Tracking-Bot:
   - Was ist hier alles möglich?
+  - Kann der Bot Informationen ausgeben? Bspw. Abfrage ob Bot verfügbar ist? -> Ausgabe auf der Webseite?
   - Kann der Bot Status-Meldungen senden oder kann man nur anfragen?
   - Anfragen:
       -> Status der Bestellung
