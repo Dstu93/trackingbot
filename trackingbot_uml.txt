@@ -5,7 +5,7 @@ title Trackingbot Architecure
 package bot{
     interface MessageBot{
         + apply(&mut self,cmds : Vec<Box<MessageCommand>>)
-        + start(&mut self) : Result<(),Error>
+        + start(&mut self) : Result<JoinHandle,Error>
     }
     class TelegramBot
     
