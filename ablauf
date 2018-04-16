@@ -1,1 +1,42 @@
-## Folgt ##
+Tabelle "User":
+  - user_id
+  - username
+  - password 
+  - mail
+  - address -> Auslagern als weitere Tabelle? -> User hätte die Möglichkeit mehrere Adresse anzulegen
+
+Tabelle "Product": -> z.B. Pizza
+  - Felder für Produkt-Eigenschaften,
+  
+Tabelle "Order":
+  - order_id
+  - order_date
+  - delivery_date
+  - delivery_address (Evtl. trennen?)
+  - order_status
+  - access_key -> Eindeutige ID für den Tracking-Bot
+  
+  Bestellformular: 
+  - Möglichkeit, dass man eine Adresse als Lieferadresse wählen kann, die ein eingeloggter Benutzer im Profil hinterlegt hat?
+  
+Tabelle "OrderPos": -> Falls mehrere Produkte je Bestellung möglich?
+  - orderpos_id
+  - order_id
+--------------------------------------------------------------------------
+
+- Benutzer kann Bestellung ansehen, stornieren (Stornierung nur bis maximal 5 Minuten nach Bestellung oder so?)
+- Benutzer kann Profildaten ansehen, bearbeiten etc. (-> Hier dann auch Adressen verwalten)
+- Soll ein Gastbenutzer bestellen können?
+- Access-Key für Bestellung ist einmalig
+- Evtl E-Mail Versand über E-Mail Server? Bspw. Bestätigung etc.? -> Aufwand zu hoch?
+- ...?
+
+Bzgl. Tracking-Bot:
+  - Was ist hier alles möglich?
+  - Kann der Bot Status-Meldungen senden oder kann man nur anfragen?
+  - Anfragen:
+      -> Status der Bestellung
+      -> Lieferdatum/zeit
+      -> Produktinformationen (je nachdem was für ein Produkt?) -> genauer besprechen
+      -> Lieferdienst (falls sowas existiert) kann Meldungen der Bestellung hinzufügen -> Extraanfrage oder in Status (Punkt 1)?
+      -> ...? 
