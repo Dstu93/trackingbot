@@ -1,5 +1,6 @@
 
 use std::error::Error;
+use std::fmt;
 
 /// Abstraction of an Command for this bot
 pub trait MessageCommand{
@@ -51,8 +52,20 @@ impl Error for CommandError{
             &CommandError::InternalCommandError => "Internal Server Error",
             &CommandError::IllegalArguments => "illegal arguments",
             &CommandError::NoArguments => "no arguments was passed",
-            &CommandError::IOError => "bad io things happend",
-            _=> "unknown CommandError"
+            &CommandError::IOError => "IOError",
         }
     }
 }
+
+impl fmt::Display for CommandError{
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            CommandError::InternalCommandError => write!(f, "InternalCommandError"),
+            CommandError::IllegalArguments => write!(f, "IllegalArguments"),
+            CommandError::NoArguments=> write!(f, "NoArguments"),
+            CommandError::IOError => write!(f,"IOerror"),
+        }
+    }
+}
+
+//TODO implement From<io::Error> for CommandError

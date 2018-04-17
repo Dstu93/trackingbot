@@ -7,6 +7,7 @@ extern crate teleborg;
 #[macro_use]
 extern crate serde_derive;
 
+pub mod bot;
 
 fn main() {
     println!("Hello, world!");
