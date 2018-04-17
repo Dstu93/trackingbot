@@ -20,9 +20,10 @@ package bot{
     
     package commands{
         interface MessageCommand{
-            + exec_cmd(&self,args: Vec<&str>, chat: &Chat) : Result<String,Error>
-            + exec_cmd_mut(&mut self, args: Vec<&str>,chat: &Chat) : Result<String,Error>
-            + type(&self) -> CommandType
+            + exec_cmd(&self,args: Option<Vec<&str>>, chat: Option<&Chat>) : Result<String,CommandError>
+            + exec_cmd_mut(&mut self, args: Option<Vec<&str>>,chat: Option<&Chat>) : Result<String,CommandError>
+            + type(&self) : CommandType
+            + need_mut(&self) : bool
         }
         class TrackingStateCommand
         class OrderDetailsCommand
@@ -40,6 +41,13 @@ package bot{
 
         class Chat
         class Message
+
+        enum CommandError{
+            + IllegalArguments
+            + NoArguments
+            + InternalCommandError
+            + IOError
+        }
     }
 }
 
@@ -61,6 +69,7 @@ TelegramBot --|> MessageBot
 
 MessageCommand --> Chat
 MessageCommand --> CommandType
+MessageCommand --> CommandError
 
 TrackingStateService --> TrackingState
 OrderDetailsService --> OrderDetails
