@@ -14,6 +14,9 @@ pub trait MessageCommand{
     /// shows the type of this Command
     fn cmd_type(&self) -> &CommandType;
 
+    /// returns the name for calling this command
+    fn name(&self) -> &str;
+
     /// flag for commands which can only be executed with a mutable state
     fn needs_mut(&self) -> bool;
 }
