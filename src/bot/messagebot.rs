@@ -1,5 +1,6 @@
 
 use bot::commands::traits::MessageCommand;
+use bot::configuration::config::ApplicationConfig;
 use std::io::Error;
 use std::thread;
 use std::thread::JoinHandle;
@@ -38,14 +39,19 @@ impl MessageBot for Telegrambot{
     }
 
     fn start(self) -> Result<JoinHandle<()>,Error>{
+        let token = Some(self.apikey);
+        let mut dispatcher = Dispatcher::new();
 
-        //Commands an Telegram Wrapper uebergeben
-        //Telegram bot bauen
+        for cmd in self.commands{
+            let name = String::from(cmd.name());
+            let telegram_cmd = TelegramCmdWrapper::new(cmd);
+            dispatcher.add_command_handler(&*name,telegram_cmd,true);
+        }
 
+        // spawns new thread with our bot logic
         let mut builder = thread::Builder::new();
-        builder.name(String::from("telegrambot_t")).spawn( |  | {
-            //TODO start telegram bot here
-
+        builder.name(String::from("telegrambot_t")).spawn( move | | {
+            Updater::start(token,None,None,None,dispatcher);
         })
     }
 }
@@ -70,4 +76,28 @@ impl Command for TelegramCmdWrapper{
         bot.reply_to_message(&update, &*answer);
     }
 }
+
+pub struct BotBuilder;
+
+impl BotBuilder{
+
+    /// instance a new MessageBot
+    pub fn build(config: &ApplicationConfig, btype: BotType) -> Box<MessageBot>{
+
+        let bot = match btype {
+           BotType::Telegram =>  Telegrambot::new(config.telegram_api_key().clone()),
+        };
+        //FIXME build commands and apply them to the bot
+
+        Box::new(bot)
+    }
+
+}
+
+/// Types of MessangerBots that can be build
+#[derive(Eq, PartialEq,Hash, Clone,Debug)]
+pub enum BotType{
+    Telegram,
+}
+
 
