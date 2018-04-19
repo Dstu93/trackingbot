@@ -8,6 +8,10 @@ pub struct ApplicationConfig{
 
 impl ApplicationConfig{
 
+    pub fn new(apikey: String,dbconfig: DatabaseConfig) -> ApplicationConfig{
+        ApplicationConfig{telegram_apikey: apikey,db_config: dbconfig}
+    }
+
     /// returns borrow of the telegram api key
     pub fn telegram_api_key(&self) -> &String{
         &self.telegram_apikey
