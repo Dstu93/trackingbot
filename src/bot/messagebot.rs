@@ -15,7 +15,7 @@ pub trait MessageBot{
     fn apply(&mut self, cmds: Vec<Box<MessageCommand + Send + Sync>>);
 
     /// starts the bot in a new Thread and returns the JoinHandle for the freshly spawned thread
-    fn start(self) -> Result<JoinHandle<()>,Error>;
+    fn start(self: Box<Self>) -> Result<JoinHandle<()>,Error>;
 }
 
 struct Telegrambot{
@@ -38,8 +38,8 @@ impl MessageBot for Telegrambot{
         self.commands.append(&mut cmds)
     }
 
-    fn start(self) -> Result<JoinHandle<()>,Error>{
-        let token = Some(self.apikey);
+    fn start(self:  Box<Self>) -> Result<JoinHandle<()>,Error>{
+        let token = Some(self.apikey.clone());
         let mut dispatcher = Dispatcher::new();
 
         for cmd in self.commands{

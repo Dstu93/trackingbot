@@ -4,12 +4,12 @@ use bot::commands::traits::{CommandError,CommandType,MessageCommand,Chat};
 use std::str::FromStr;
 
 pub struct TrackingStateCommand{
-    service: Box<TrackingStateService>,
+    service: Box<TrackingStateService + Send + Sync>,
 }
 
 impl TrackingStateCommand{
 
-    pub fn new(service: Box<TrackingStateService>) -> TrackingStateCommand{
+    pub fn new(service: Box<TrackingStateService + Send + Sync>) -> TrackingStateCommand{
         TrackingStateCommand{service}
     }
 
