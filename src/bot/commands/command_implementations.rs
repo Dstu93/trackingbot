@@ -39,6 +39,7 @@ impl MessageCommand for TrackingStateCommand{
 
         let result = self.service.state(tracking_code);
         if result.is_err(){
+            println!("Ein Fehler bei der Datenbank abfrage ist aufgetrteten: {:#?}", result.unwrap_err());
             return Err(CommandError::IOError);
         }
         let state = result.unwrap();
@@ -46,7 +47,7 @@ impl MessageCommand for TrackingStateCommand{
             return Ok(String::from("Kein Status gefunden"));
         }
         let state = state.unwrap();
-        let answer = format!("Trackingcode: {}\n,Lieferadresse: {}\n,Entgegen genommen von: {}\n,Lieferstatus: {}",
+        let answer = format!("Trackingcode: {},\nLieferadresse: {},\nEntgegen genommen von: {},\nLieferstatus: {}",
                                       state.access_key(),state.delivery_address(), state.delivered_to(),state.state());
         Ok(answer)
     }

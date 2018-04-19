@@ -31,6 +31,7 @@ impl TrackingStateServiceImpl{
     }
 
     fn map_to_io_err(e: mysql::Error) -> Error{
+        println!("Error in TrackingStateServiceImpl: {:#?}", &e );
         let descr = e.description();
         Error::new(ErrorKind::NotConnected, descr)
     }
@@ -41,14 +42,12 @@ impl TrackingStateService for TrackingStateServiceImpl{
 
     fn state(&self, tracking_code: &str) -> Result<Option<TrackingState>,Error>{
 
-        let result = self.pool.prep_exec("",());
-        if result.is_err(){
-            return Err(TrackingStateServiceImpl::map_to_io_err(result.unwrap_err()));
-        }
-        let query_result = result.unwrap();
+        let params = params!{
+                "access_key" => tracking_code,
+            };
 
         let mut selected_states: Vec<TrackingState> =
-            self.pool.prep_exec("SELECT access_key, delivery_address, delivered_to,order_status FROM shop.order", ())
+            self.pool.prep_exec("SELECT access_key, delivery_address, delivered_to,order_status from shop.order WHERE access_key = (:access_key)", params)
                 .map(|result| {
                     result.map(|x| x.unwrap()).map(|row| {
                         let (access_key, del_adr,del_to,state) = mysql::from_row(row);

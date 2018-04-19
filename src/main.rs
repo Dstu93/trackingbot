@@ -3,6 +3,7 @@ extern crate postgres;
 extern crate serde;
 extern crate serde_json;
 extern crate teleborg;
+#[macro_use]
 extern crate mysql;
 
 #[macro_use]
