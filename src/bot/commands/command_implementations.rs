@@ -1,6 +1,7 @@
 
 use bot::commands::services::TrackingStateService;
 use bot::commands::traits::{CommandError,CommandType,MessageCommand,Chat};
+use std::str::FromStr;
 
 pub struct TrackingStateCommand{
     service: Box<TrackingStateService>,
@@ -17,11 +18,37 @@ impl TrackingStateCommand{
 impl MessageCommand for TrackingStateCommand{
 
     fn exec_cmd(&self, args: Option<Vec<&str>>, chat: Option<&Chat>) -> Result<String,CommandError>{
-        //TODO
-        // parsen der str zu u64
-        //code an service weiter geben
-        //TrackingState zu String formatieren
-        Err(CommandError::IllegalArguments)
+
+        if args.is_none(){
+            return Err(CommandError::NoArguments);
+        }
+        let arguments = args.unwrap();
+        if arguments.len()  < 1{
+            return Err(CommandError::NoArguments);
+        }
+        if arguments.len() > 1 {
+             return Err(CommandError::IllegalArguments);
+        }
+
+        //vorvalidierung
+        let tracking_code = arguments.get(0).unwrap();
+        let parse_validation = u64::from_str(tracking_code);
+        if parse_validation.is_err() {
+           return Err(CommandError::IllegalArguments);
+        }
+
+        let result = self.service.state(tracking_code);
+        if result.is_err(){
+            return Err(CommandError::IOError);
+        }
+        let state = result.unwrap();
+        if state.is_none(){
+            return Ok(String::from("Kein Status gefunden"));
+        }
+        let state = state.unwrap();
+        let answer = format!("Trackingcode: {}\n,Lieferadresse: {}\n,Entgegen genommen von: {}\n,Lieferstatus: {}",
+                                      state.access_key(),state.delivery_address(), state.delivered_to(),state.state());
+        Ok(answer)
     }
 
     fn exec_cmd_mut(&mut self, args: Option<Vec<&str>>,chat: Option<&Chat>) -> Result<String,CommandError>{
