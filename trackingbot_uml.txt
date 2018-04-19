@@ -4,14 +4,14 @@ title Trackingbot Architecure
 
 package bot{
     interface MessageBot{
-        + apply(&mut self,cmds : Vec<Box<MessageCommand>>)
-        + start(&mut self) : Result<JoinHandle,Error>
+        + apply(cmds : Vec<MessageCommand>)
+        + start() : JoinHandle
     }
     class TelegramBot
     
     class BotBuilder{
         + new() : BotBuilder
-        + build(&self,config : AppConfig, type : BotType) : Result<Box<MessageBot>,Error>
+        + build(config : AppConfig, type : BotType) : MessageBot>
     }
     
     enum BotType{
@@ -20,23 +20,40 @@ package bot{
     
     package commands{
         interface MessageCommand{
-            + exec_cmd(&self,args: Option<Vec<&str>>, chat: Option<&Chat>) : Result<String,CommandError>
-            + exec_cmd_mut(&mut self, args: Option<Vec<&str>>,chat: Option<&Chat>) : Result<String,CommandError>
-            + type(&self) : CommandType
-            + need_mut(&self) : bool
+            + exec_cmd(args: Vec<String>, chat: Chat) : Result<String,CommandError>
+            + exec_cmd_mut(args: Vec<String>>,chat: Chat) : Result<String,CommandError>
+            + type() : CommandType
+            + need_mut() : bool
         }
-        class TrackingStateCommand
-        class OrderDetailsCommand
+        class TrackingStateCommand{
+            - dao: TrackingStateService
+        }
         enum CommandType{
             + SingleCommand
             + ChatCommand
         }
 
         package services{
-            interface TrackingStateService
-            interface OrderDetailsService
-            class OrderDetails
-            class TrackingState
+
+            interface TrackingStateService{
+                + state(tracking_code: String) -> Result<Option<TrackingState>,Error>
+            }
+
+            class TrackingStateServiceImpl{
+                + TrackingStateServiceImpl(config: DatabaseConfig)
+            }
+
+            class TrackingState{
+                - access_key: u64
+                - delivery_address: String
+                - delivered_to: String
+                - order_state: String
+                --
+                + key(): u64
+                + delivery_address(): String
+                + delivered_to(): String
+                + state(): String
+            }
         }
 
         class Chat
@@ -52,8 +69,27 @@ package bot{
 }
 
     package config{
-        class AppConfig
-        class DatabaseConfig
+        class AppConfig{
+            - telegram_apikey: String
+            - databaseConfig: DatabaseConfig
+            --
+            + new(apikey: String, config: DatabaseConfig): AppConfig
+            + telegram_apikey(): String
+            + databaseConfig(): DatabaseConfig
+        }
+        class DatabaseConfig{
+            - port: u16
+            - host: String
+            - user: String
+            - password: String
+            - database: String
+            --
+            + port(): u16
+            + host(): String
+            + user(): String
+            + password(): String
+            + database(): String
+        }
         class ConfigLoader{
             + load() : Result<AppConfig,Error>
     }
@@ -72,11 +108,10 @@ MessageCommand --> CommandType
 MessageCommand --> CommandError
 
 TrackingStateService --> TrackingState
-OrderDetailsService --> OrderDetails
+TrackingStateServiceImpl --|> TrackingStateService
+TrackingStateServiceImpl --* DatabaseConfig
 
 TrackingStateCommand --|> MessageCommand
-OrderDetailsCommand --|> MessageCommand
-OrderDetailsCommand --> OrderDetailsService
 TrackingStateCommand --> TrackingStateService
 MessageBot --> MessageCommand
 
