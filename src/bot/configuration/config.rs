@@ -51,8 +51,11 @@ impl DatabaseConfig{
         &self.user
     }
 
-    pub fn password(&self) -> &Option<String>{
-        &self.password
+    pub fn password(&self) -> Option<String>{
+        match self.password {
+            None => None,
+            Some(ref p) => Some(p.clone()),
+        }
     }
 
     /// returns the name of the database
