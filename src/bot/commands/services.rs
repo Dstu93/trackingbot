@@ -7,6 +7,6 @@ use std::io::Error;
 pub trait TrackingStateService{
 
     /// finds the tracking information of the delivery with the given code
-    fn state(&self, tracking_code: &str) -> Result<TrackingState,Error>;
+    fn state(&self, tracking_code: &str) -> Result<Option<TrackingState>,Error>;
 
 }

@@ -8,6 +8,8 @@ extern crate teleborg;
 extern crate serde_derive;
 
 mod bot;
+
+#[cfg(test)]
 mod tests;
 
 use bot::configuration::loader;
