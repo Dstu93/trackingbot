@@ -7,11 +7,21 @@ package bot{
         + apply(cmds : Vec<MessageCommand>)
         + start() : JoinHandle
     }
-    class TelegramBot
+    class TelegramBot{
+        - commands: Vec<TelegramCommandWrapper>
+    }
+
+    class TelegramCommandWrapper{
+        - cmd: MessageCommand
+        --
+        {static} + new(cmd: MessageCommand): TelegramCommandWrapper
+        + execute(bot: Bot, update: Update, args: String[]>
+    }
     
     class BotBuilder{
-        + new() : BotBuilder
-        + build(config : AppConfig, type : BotType) : MessageBot>
+        --
+        {static} + new() : BotBuilder
+        {static} + build(config : AppConfig, type : BotType) : MessageBot>
     }
     
     enum BotType{
@@ -33,14 +43,20 @@ package bot{
             + ChatCommand
         }
 
+        class MessageCommandFactory{
+            {static } + build(config: &ApplicationConfig) -> Vec<MessageCommand>
+        }
+
         package services{
+
+
 
             interface TrackingStateService{
                 + state(tracking_code: String) -> Result<Option<TrackingState>,Error>
             }
 
             class TrackingStateServiceImpl{
-                + TrackingStateServiceImpl(config: DatabaseConfig)
+                {static} + TrackingStateServiceImpl(config: DatabaseConfig)
             }
 
             class TrackingState{
@@ -91,17 +107,23 @@ package bot{
             + database(): String
         }
         class ConfigLoader{
-            + load() : Result<AppConfig,Error>
+            {static} + load() : Result<AppConfig,Error>
     }
 }
 
 BotBuilder --> BotType
 BotBuilder --> AppConfig
 BotBuilder --> MessageBot
+BotBuilder --> TrackingStateServiceImpl
+BotBuilder --> MessageCommandFactory
+BotBuilder --> TelegramBot
+
+MessageCommandFactory --> MessageCommand
 
 Chat ---* Message
 
 TelegramBot --|> MessageBot
+TelegramBot --> TelegramCommandWrapper
 
 MessageCommand --> Chat
 MessageCommand --> CommandType
